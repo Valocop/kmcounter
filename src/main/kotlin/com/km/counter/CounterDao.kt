@@ -4,8 +4,8 @@ import kotlinx.coroutines.Dispatchers
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.plus
-import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
+import org.jetbrains.exposed.sql.transactions.transaction
 
 class CounterDao(database: Database) {
 
@@ -51,6 +51,14 @@ class CounterDao(database: Database) {
                 ) { it.update(counter, counter + 1) }
                 .singleOrNull()
                 ?.get(Counter.counter)
+        }
+    }
+
+    suspend fun findAll(): Map<String, Long> {
+        return dbQuery {
+            Counter
+                .selectAll()
+                .associate { it[Counter.name] to it[Counter.counter] }
         }
     }
 
