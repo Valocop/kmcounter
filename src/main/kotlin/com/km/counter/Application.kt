@@ -4,17 +4,10 @@ import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
+import io.ktor.server.plugins.callloging.*
 import io.ktor.server.plugins.contentnegotiation.*
-import io.ktor.server.plugins.cors.routing.CORS
-import io.ktor.server.plugins.defaultheaders.DefaultHeaders
-import io.ktor.server.plugins.callloging.CallLogging
-import org.jetbrains.exposed.sql.Table
-
-// Define the table
-object Counters : Table(name = "counter") {
-    val name = text("name")
-    val value = integer("value")
-}
+import io.ktor.server.plugins.cors.routing.*
+import io.ktor.server.plugins.defaultheaders.*
 
 fun Application.module() {
     install(DefaultHeaders)
