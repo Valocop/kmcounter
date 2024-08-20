@@ -31,6 +31,9 @@ dependencies {
     implementation("org.jetbrains.exposed:exposed-jdbc:$exposedVersion")
     implementation("ch.qos.logback:logback-classic:1.4.12")
     implementation("org.postgresql:postgresql:42.6.0")
+    testImplementation("io.kotest:kotest-runner-junit5:5.6.2")
+    testImplementation("io.kotest:kotest-assertions-core:5.6.2")
+    testImplementation("org.testcontainers:postgresql:1.19.0")
     testImplementation(kotlin("test"))
 }
 
