@@ -1,17 +1,21 @@
 package com.km.counter
 
-import io.ktor.http.*
-import io.ktor.serialization.kotlinx.json.*
-import io.ktor.server.application.*
-import io.ktor.server.engine.*
-import io.ktor.server.netty.*
-import io.ktor.server.plugins.callloging.*
-import io.ktor.server.plugins.contentnegotiation.*
-import io.ktor.server.plugins.cors.routing.*
-import io.ktor.server.plugins.defaultheaders.*
-import io.ktor.server.request.*
-import io.ktor.server.response.*
-import io.ktor.server.routing.*
+import io.ktor.http.HttpStatusCode
+import io.ktor.serialization.kotlinx.json.json
+import io.ktor.server.application.Application
+import io.ktor.server.application.call
+import io.ktor.server.application.install
+import io.ktor.server.engine.embeddedServer
+import io.ktor.server.netty.Netty
+import io.ktor.server.plugins.callloging.CallLogging
+import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.server.plugins.cors.routing.CORS
+import io.ktor.server.plugins.defaultheaders.DefaultHeaders
+import io.ktor.server.request.receive
+import io.ktor.server.response.respond
+import io.ktor.server.routing.get
+import io.ktor.server.routing.post
+import io.ktor.server.routing.routing
 import org.jetbrains.exposed.sql.Database
 
 fun Application.module() {
@@ -25,10 +29,10 @@ fun Application.module() {
     }
 
     val database = Database.connect(
-        url = "jdbc:h2:mem:test;DB_CLOSE_DELAY=-1",
+        url = "jdbc:postgresql://localhost:55432/counter",
         user = "root",
-        driver = "org.h2.Driver",
-        password = ""
+        password = "root",
+        driver = "org.postgresql.Driver"
     )
 
     val counterDao = CounterDao(database)
@@ -44,8 +48,11 @@ fun Application.module() {
         }
 
         // Read
-        get("/Get/{counter}") {
-            val name = call.parameters["counter"] ?: throw IllegalArgumentException("Invalid counter")
+        get("/Get") {
+            val name = call.parameters["counter"] ?: return@get call.respond(
+                HttpStatusCode.BadRequest,
+                "Missing 'counter' query parameter"
+            )
 
             val counter = counterDao.find(name) ?: return@get call.respond(HttpStatusCode.NotFound)
 
@@ -53,8 +60,11 @@ fun Application.module() {
         }
 
         // Delete
-        post("/Delete/{counter}") {
-            val name = call.parameters["counter"] ?: throw IllegalArgumentException("Invalid counter")
+        post("/Delete") {
+            val name = call.parameters["counter"] ?: return@post call.respond(
+                HttpStatusCode.BadRequest,
+                "Missing 'counter' query parameter"
+            )
 
             counterDao.delete(name)
 
@@ -62,8 +72,11 @@ fun Application.module() {
         }
 
         // Increment
-        post("/Increment/{counter}") {
-            val name = call.parameters["counter"] ?: throw IllegalArgumentException("Invalid counter")
+        post("/Increment") {
+            val name = call.parameters["counter"] ?: return@post call.respond(
+                HttpStatusCode.BadRequest,
+                "Missing 'counter' query parameter"
+            )
 
             val counter = counterDao.increment(name) ?: return@post call.respond(HttpStatusCode.NotFound)
 

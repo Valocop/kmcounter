@@ -29,8 +29,8 @@ dependencies {
     implementation("org.jetbrains.exposed:exposed-core:$exposedVersion")
     implementation("org.jetbrains.exposed:exposed-dao:$exposedVersion")
     implementation("org.jetbrains.exposed:exposed-jdbc:$exposedVersion")
-    implementation("ch.qos.logback:logback-classic:1.4.11")
-    implementation("com.h2database:h2:2.1.214")
+    implementation("ch.qos.logback:logback-classic:1.4.12")
+    implementation("org.postgresql:postgresql:42.6.0")
     testImplementation(kotlin("test"))
 }
 
